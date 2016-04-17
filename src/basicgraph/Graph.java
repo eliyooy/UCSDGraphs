@@ -76,7 +76,7 @@ public abstract class Graph {
 	
 	/**
 	 * Add new edge to the graph between given vertices,
-	 * @param u Index of the start point of the edge to be added. 
+	 * @param w Index of the start point of the edge to be added.
 	 * @param v Index of the end point of the edge to be added. 
 	 */
 	public void addEdge(int v , int w) {
@@ -122,7 +122,24 @@ public abstract class Graph {
 	 */
 	public List<Integer> degreeSequence() {
 		// XXX: Implement in part 1 of week 1
-		return null;
+		List<Integer> processedSequence = new ArrayList<Integer>();
+		int totalNeighbors = 0;
+		System.out.println("Total number of vertices is " + numVertices);
+
+		for(int i=0; i <= numVertices - 1; i++) {
+				totalNeighbors = getNeighbors(i).toArray().length + getInNeighbors(i).toArray().length;
+				//System.out.println("totalNeighbors result for " + i + " was " + totalNeighbors);
+
+
+			processedSequence.add(totalNeighbors);
+		}
+
+		Collections.sort(processedSequence);
+		Collections.reverse(processedSequence);
+
+		//System.out.println(processedSequence);
+
+		return processedSequence;
 	}
 	
 	/**
@@ -164,7 +181,7 @@ public abstract class Graph {
 	/**
 	 * Test whether some vertex in the graph is labeled 
 	 * with a given index.
-	 * @param The index being checked
+	 * @param v The index being checked
 	 * @return True if there's a vertex in the graph with this index; false otherwise.
 	 */
 	public boolean hasVertex(int v)
@@ -175,7 +192,7 @@ public abstract class Graph {
 	/**
 	 * Test whether some vertex in the graph is labeled 
 	 * with a given String label
-	 * @param The String label being checked
+	 * @param s String label being checked
 	 * @return True if there's a vertex in the graph with this label; false otherwise.
 	 */
 	public boolean hasVertex(String s)
@@ -185,8 +202,8 @@ public abstract class Graph {
 	
 	/**
 	 * Add label to an unlabeled vertex in the graph.
-	 * @param The index of the vertex to be labeled.
-	 * @param The label to be assigned to this vertex.
+	 * @param v index of the vertex to be labeled.
+	 * @param s label to be assigned to this vertex.
 	 */
 	public void addLabel(int v, String s) {
 		if (v < getNumVertices() && !vertexLabels.containsKey(v)) 
@@ -200,7 +217,7 @@ public abstract class Graph {
 	
 	/**
 	 * Report label of vertex with given index
-	 * @param The integer index of the vertex
+	 * @param v integer index of the vertex
 	 * @return The String label of this vertex 
 	 */
 	public String getLabel(int v) {
@@ -213,7 +230,7 @@ public abstract class Graph {
 	/**
 	 * Report index of vertex with given label.
 	 * (Assume distinct labels for vertices.)
-	 * @param The String label of the vertex
+	 * @param s String label of the vertex
 	 * @return The integer index of this vertex 
 	 */
 	public int getIndex(String s) {
@@ -228,7 +245,7 @@ public abstract class Graph {
 
 	
 	public static void main (String[] args) {
-		GraphLoader.createIntersectionsFile("data/maps/myucsd.map", "data/intersections/myucsd.intersections");
+		GraphLoader.createIntersectionsFile("data/maps/ucsd.map", "data/intersections/myucsd.intersections");
 		
 
 		// For testing of Part 1 functionality
