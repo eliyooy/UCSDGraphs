@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95351ea2-f204-406e-a634-3a13a1f622fd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/UCSDGraphs/basicgraph/GraphAdjList.class" afterPath="$PROJECT_DIR$/out/production/UCSDGraphs/basicgraph/GraphAdjList.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/UCSDGraphs/basicgraph/GraphAdjMatrix.class" afterPath="$PROJECT_DIR$/out/production/UCSDGraphs/basicgraph/GraphAdjMatrix.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/UCSDGraphs/roadgraph/MapGraph.class" afterPath="$PROJECT_DIR$/out/production/UCSDGraphs/roadgraph/MapGraph.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/roadgraph/MapGraph.java" afterPath="$PROJECT_DIR$/src/roadgraph/MapGraph.java" />
     </list>
     <ignored path="UCSDGraphs.iws" />
@@ -39,8 +35,8 @@
       <file leaf-file-name="MapGraph.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/roadgraph/MapGraph.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="201" column="48" selection-start-line="201" selection-start-column="48" selection-end-line="201" selection-end-column="48" />
+            <state relative-caret-position="2640">
+              <caret line="186" column="0" selection-start-line="186" selection-start-column="0" selection-end-line="186" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -188,8 +184,8 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-38" />
-    <option name="y" value="24" />
+    <option name="x" value="5" />
+    <option name="y" value="56" />
     <option name="width" value="1280" />
     <option name="height" value="703" />
   </component>
@@ -351,7 +347,7 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/data" />
     <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
   </component>
-  <component name="RunManager" selected="Application.MapApp">
+  <component name="RunManager" selected="Application.MapGraph">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
@@ -887,15 +883,15 @@
       <workItem from="1461115605454" duration="381000" />
       <workItem from="1462239236142" duration="1607000" />
       <workItem from="1462285578308" duration="16267000" />
-      <workItem from="1462372561747" duration="5395000" />
+      <workItem from="1462372561747" duration="6864000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="27246000" />
+    <option name="totallyTimeSpent" value="28715000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-38" y="24" width="1280" height="703" extended-state="0" />
+    <frame x="5" y="56" width="1280" height="703" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1268,8 +1264,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/roadgraph/MapGraph.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="201" column="48" selection-start-line="201" selection-start-column="48" selection-end-line="201" selection-end-column="48" />
+        <state relative-caret-position="2640">
+          <caret line="186" column="0" selection-start-line="186" selection-start-column="0" selection-end-line="186" selection-end-column="0" />
           <folding />
         </state>
       </provider>

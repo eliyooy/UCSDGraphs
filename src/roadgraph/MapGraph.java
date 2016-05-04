@@ -23,14 +23,20 @@ import util.GraphLoader;
  */
 public class MapGraph {
 	//TODO: Add your member variables here in WEEK 2
-	
+
 	private int numVertices;
 	private int numEdges;
 	private Set<GeographicPoint> vertices;
 	private HashMap<GeographicPoint, ArrayList<MapEdge>> edges;
 
 	/** 
-	 * Create a new empty MapGraph 
+	 * Create a new empty MapGraph
+	 * numVertices - The number of vertices on the map
+	 * numEdges - The number of edges in the map
+	 * vertices - Set containing all vertices in the map
+	 * edges - HashMap containing all edges in the map, keyed to the origin GeographicPoint of the edge.
+	 * Key returns an ArrayList with all edges extending from the keyed GeographicPoint.
+	 * Each edge is represented by a MapEdge object which contains all data for the edge.
 	 */
 	public MapGraph()
 	{
@@ -39,7 +45,6 @@ public class MapGraph {
 		numEdges = 0;
 		vertices = new HashSet<>();
 		edges = new HashMap<>();
-		//verticesList = new HashMap<>();
 	}
 	
 	/**
@@ -104,6 +109,8 @@ public class MapGraph {
 	/**
 	 * Adds a directed edge to the graph from pt1 to pt2.  
 	 * Precondition: Both GeographicPoints have already been added to the graph
+	 * Creates a new MapEdge object with param data. Adds the new edge to the HashMap
+	 * of edges.
 	 * @param from The starting point of the edge
 	 * @param to The ending point of the edge
 	 * @param roadName The name of the road
@@ -167,6 +174,7 @@ public class MapGraph {
 
 		Queue<GeographicPoint> q = new LinkedList<>();
 		LinkedList<GeographicPoint> visited = new LinkedList<>();
+
 		ArrayList<GeographicPoint> firstList = new ArrayList<>();
 		List<ArrayList<GeographicPoint>> paths = new LinkedList<>();
 		List<ArrayList<GeographicPoint>> finalLists = new LinkedList<>();
@@ -177,8 +185,6 @@ public class MapGraph {
 		paths.add(firstList);
 		int pathsSize = 1;
 
-		System.out.println("goal = " + goal);
-
 		while(!q.isEmpty()) {
 			if (!edges.containsKey(q.peek())) {
 				q.remove();
@@ -187,10 +193,8 @@ public class MapGraph {
 
 			GeographicPoint curr = q.remove();
 			nodeSearched.accept(curr);
-			System.out.println("curr = " + curr);
 
 			if (curr.equals(goal)) {
-				System.out.println("Paths is " + paths);
 				for (ArrayList<GeographicPoint> currList : paths) {
 					GeographicPoint lastPoint = currList.get(currList.size() - 1);
 
@@ -215,7 +219,6 @@ public class MapGraph {
 				}
 
 				shortestList.add(goal);
-				System.out.println("Shortestlist is " + shortestList);
 				return shortestList;
 
 			} else {
@@ -229,10 +232,7 @@ public class MapGraph {
 					}
 
 					for (int i=0; i<pathsSize; i++) {
-						System.out.println("paths.size() = " + paths.size());
-						System.out.println("pathsSize = " + pathsSize);
 						if (paths.get(i).get(paths.get(i).size() - 1).equals(curr)) {
-							//System.out.println("Accessed else for loop");
 							ArrayList<GeographicPoint> newList = new ArrayList<>();
 							newList.addAll(paths.get(i));
 							newList.add(neighbor.getTo());
@@ -245,7 +245,6 @@ public class MapGraph {
 				}
 			}
 		}
-		System.out.println("returned null");
 		return null;
 	}
 	
