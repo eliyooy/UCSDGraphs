@@ -8,15 +8,14 @@
 package roadgraph;
 
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import geography.GeographicPoint;
 import util.GraphLoader;
 
 /**
- * @author UCSD MOOC development team and YOU
+ * @author UCSD MOOC development team and eliyooy
  * 
  * A class which represents a graph of geographic locations
  * Nodes in the graph are intersections between 
@@ -25,13 +24,22 @@ import util.GraphLoader;
 public class MapGraph {
 	//TODO: Add your member variables here in WEEK 2
 	
-	
+	private int numVertices;
+	private int numEdges;
+	private Set<GeographicPoint> vertices;
+	private HashMap<GeographicPoint, ArrayList<MapEdge>> edges;
+
 	/** 
 	 * Create a new empty MapGraph 
 	 */
 	public MapGraph()
 	{
 		// TODO: Implement in this constructor in WEEK 2
+		numVertices = 0;
+		numEdges = 0;
+		vertices = new HashSet<>();
+		edges = new HashMap<>();
+		//verticesList = new HashMap<>();
 	}
 	
 	/**
@@ -41,7 +49,7 @@ public class MapGraph {
 	public int getNumVertices()
 	{
 		//TODO: Implement this method in WEEK 2
-		return 0;
+		return numVertices;
 	}
 	
 	/**
@@ -51,7 +59,7 @@ public class MapGraph {
 	public Set<GeographicPoint> getVertices()
 	{
 		//TODO: Implement this method in WEEK 2
-		return null;
+		return vertices;
 	}
 	
 	/**
@@ -61,7 +69,7 @@ public class MapGraph {
 	public int getNumEdges()
 	{
 		//TODO: Implement this method in WEEK 2
-		return 0;
+		return numEdges;
 	}
 
 	
@@ -73,9 +81,23 @@ public class MapGraph {
 	 * @return true if a node was added, false if it was not (the node
 	 * was already in the graph, or the parameter is null).
 	 */
-	public boolean addVertex(GeographicPoint location)
-	{
+	public boolean addVertex(GeographicPoint location) {
 		// TODO: Implement this method in WEEK 2
+		if (graphContainsNode(location) || location == null) {
+			return false;
+		} else {
+			vertices.add(location);
+			numVertices += 1;
+			return true;
+		}
+	}
+
+	public boolean graphContainsNode(GeographicPoint location) {
+
+		if(vertices.contains(location)) {
+			return true;
+		}
+
 		return false;
 	}
 	
@@ -95,6 +117,21 @@ public class MapGraph {
 			String roadType, double length) throws IllegalArgumentException {
 
 		//TODO: Implement this method in WEEK 2
+		if(!graphContainsNode(from) || !graphContainsNode(to) || length < 0 || from == null || to == null ||
+				roadName == null || roadType == null) {
+			throw new IllegalArgumentException("Please enter valid values for all parameters.");
+		}
+
+		MapEdge newEdge = new MapEdge(from, to, roadName, roadType, length);
+
+		if(edges.containsKey(from)) {
+			edges.get(from).add(newEdge);
+		} else {
+			edges.put(from, new ArrayList<>());
+			edges.get(from).add(newEdge);
+		}
+
+		numEdges += 1;
 		
 	}
 	
@@ -126,8 +163,89 @@ public class MapGraph {
 		// TODO: Implement this method in WEEK 2
 		
 		// Hook for visualization.  See writeup.
-		//nodeSearched.accept(next.getLocation());
+		//nodeSearched.accept(next);
 
+		Queue<GeographicPoint> q = new LinkedList<>();
+		LinkedList<GeographicPoint> visited = new LinkedList<>();
+		ArrayList<GeographicPoint> firstList = new ArrayList<>();
+		List<ArrayList<GeographicPoint>> paths = new LinkedList<>();
+		List<ArrayList<GeographicPoint>> finalLists = new LinkedList<>();
+
+		q.add(start);
+		visited.add(start);
+		firstList.add(start);
+		paths.add(firstList);
+		int pathsSize = 1;
+
+		System.out.println("goal = " + goal);
+
+		while(!q.isEmpty()) {
+			if (!edges.containsKey(q.peek())) {
+				q.remove();
+				continue;
+			}
+
+			GeographicPoint curr = q.remove();
+			nodeSearched.accept(curr);
+			System.out.println("curr = " + curr);
+
+			if (curr.equals(goal)) {
+				System.out.println("Paths is " + paths);
+				for (ArrayList<GeographicPoint> currList : paths) {
+					GeographicPoint lastPoint = currList.get(currList.size() - 1);
+
+					if(edges.get(lastPoint) == null) {
+						continue;
+					}
+
+					for (MapEdge currEdge : edges.get(lastPoint)) {
+						if (currEdge.getTo().equals(curr)) {
+							finalLists.add(currList);
+							break;
+						}
+					}
+				}
+
+				ArrayList<GeographicPoint> shortestList = finalLists.get(0);
+
+				for (ArrayList<GeographicPoint> finalist : finalLists) {
+					if (finalist.size() < shortestList.size()) {
+						shortestList = finalist;
+					}
+				}
+
+				shortestList.add(goal);
+				System.out.println("Shortestlist is " + shortestList);
+				return shortestList;
+
+			} else {
+
+				for (MapEdge neighbor : edges.get(curr)) {  // edges.get(curr) returns an arrayList, not a MapEdge
+					int pathsAdditions = 0;
+
+					if (!visited.contains(neighbor.getTo())) {
+						visited.add(neighbor.getTo());
+						q.add(neighbor.getTo());
+					}
+
+					for (int i=0; i<pathsSize; i++) {
+						System.out.println("paths.size() = " + paths.size());
+						System.out.println("pathsSize = " + pathsSize);
+						if (paths.get(i).get(paths.get(i).size() - 1).equals(curr)) {
+							//System.out.println("Accessed else for loop");
+							ArrayList<GeographicPoint> newList = new ArrayList<>();
+							newList.addAll(paths.get(i));
+							newList.add(neighbor.getTo());
+							paths.add(newList);
+							pathsAdditions += 1;
+						}
+					}
+
+					pathsSize += pathsAdditions;
+				}
+			}
+		}
+		System.out.println("returned null");
 		return null;
 	}
 	
@@ -207,8 +325,11 @@ public class MapGraph {
 		GraphLoader.loadRoadMap("data/testdata/simpletest.map", theMap);
 		System.out.println("DONE.");
 		
-		// You can use this method for testing.  
-		
+		// You can use this method for testing.
+		GeographicPoint start = new GeographicPoint(4.0, 2.0);
+		GeographicPoint end = new GeographicPoint(8.0, -1.0);
+		theMap.bfs(start, end);
+
 		/* Use this code in Week 3 End of Week Quiz
 		MapGraph theMap = new MapGraph();
 		System.out.print("DONE. \nLoading the map...");
