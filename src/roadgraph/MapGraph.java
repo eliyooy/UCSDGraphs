@@ -188,9 +188,8 @@ public class MapGraph {
 			nodeSearched.accept(curr);
 
 			if (curr.equals(goal)) {
-				
-				List<GeographicPoint> shortestList = determineShortestList(paths, curr, goal);
-				return shortestList;
+
+				return determineShortestList(paths, curr, goal);
 
 			} else {
 

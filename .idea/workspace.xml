@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95351ea2-f204-406e-a634-3a13a1f622fd" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/UCSDGraphs/roadgraph/MapGraph.class" afterPath="$PROJECT_DIR$/out/production/UCSDGraphs/roadgraph/MapGraph.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/roadgraph/MapGraph.java" afterPath="$PROJECT_DIR$/src/roadgraph/MapGraph.java" />
     </list>
     <ignored path="UCSDGraphs.iws" />
@@ -37,8 +35,8 @@
       <file leaf-file-name="MapGraph.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/roadgraph/MapGraph.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="190" column="16" selection-start-line="190" selection-start-column="16" selection-end-line="190" selection-end-column="16" />
+            <state relative-caret-position="122">
+              <caret line="191" column="64" selection-start-line="191" selection-start-column="64" selection-end-line="191" selection-end-column="64" />
               <folding />
             </state>
           </provider>
@@ -168,7 +166,7 @@
     <detection-done>true</detection-done>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-40" />
+    <option name="x" value="120" />
     <option name="y" value="23" />
     <option name="width" value="1280" />
     <option name="height" value="700" />
@@ -869,15 +867,15 @@
       <workItem from="1462285578308" duration="16267000" />
       <workItem from="1462372561747" duration="10291000" />
       <workItem from="1462816141820" duration="1000" />
-      <workItem from="1462816152900" duration="3572000" />
+      <workItem from="1462816152900" duration="3768000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="35715000" />
+    <option name="totallyTimeSpent" value="35911000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-40" y="23" width="1280" height="700" extended-state="0" />
+    <frame x="120" y="23" width="1280" height="700" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1079,8 +1077,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/roadgraph/MapGraph.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="190" column="16" selection-start-line="190" selection-start-column="16" selection-end-line="190" selection-end-column="16" />
+        <state relative-caret-position="122">
+          <caret line="191" column="64" selection-start-line="191" selection-start-column="64" selection-end-line="191" selection-end-column="64" />
           <folding />
         </state>
       </provider>
