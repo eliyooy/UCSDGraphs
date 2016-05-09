@@ -174,16 +174,9 @@ public class MapGraph {
 
 		Queue<GeographicPoint> q = new LinkedList<>();
 		LinkedList<GeographicPoint> visited = new LinkedList<>();
-
-		ArrayList<GeographicPoint> firstList = new ArrayList<>();
 		List<ArrayList<GeographicPoint>> paths = new LinkedList<>();
-		List<ArrayList<GeographicPoint>> finalLists = new LinkedList<>();
-
-		q.add(start);
-		visited.add(start);
-		firstList.add(start);
-		paths.add(firstList);
-		int pathsSize = 1;
+		loadPaths(paths, q, visited, start);
+		int possiblePaths = 1;
 
 		while(!q.isEmpty()) {
 			if (!edges.containsKey(q.peek())) {
@@ -195,57 +188,92 @@ public class MapGraph {
 			nodeSearched.accept(curr);
 
 			if (curr.equals(goal)) {
-				for (ArrayList<GeographicPoint> currList : paths) {
-					GeographicPoint lastPoint = currList.get(currList.size() - 1);
-
-					if(edges.get(lastPoint) == null) {
-						continue;
-					}
-
-					for (MapEdge currEdge : edges.get(lastPoint)) {
-						if (currEdge.getTo().equals(curr)) {
-							finalLists.add(currList);
-							break;
-						}
-					}
-				}
-
-				ArrayList<GeographicPoint> shortestList = finalLists.get(0);
-
-				for (ArrayList<GeographicPoint> finalist : finalLists) {
-					if (finalist.size() < shortestList.size()) {
-						shortestList = finalist;
-					}
-				}
-
-				shortestList.add(goal);
+				
+				List<GeographicPoint> shortestList = determineShortestList(paths, curr, goal);
 				return shortestList;
 
 			} else {
 
-				for (MapEdge neighbor : edges.get(curr)) {  // edges.get(curr) returns an arrayList, not a MapEdge
-					int pathsAdditions = 0;
-
+				for (MapEdge neighbor : edges.get(curr)) {
 					if (!visited.contains(neighbor.getTo())) {
 						visited.add(neighbor.getTo());
 						q.add(neighbor.getTo());
 					}
 
-					for (int i=0; i<pathsSize; i++) {
-						if (paths.get(i).get(paths.get(i).size() - 1).equals(curr)) {
-							ArrayList<GeographicPoint> newList = new ArrayList<>();
-							newList.addAll(paths.get(i));
-							newList.add(neighbor.getTo());
-							paths.add(newList);
-							pathsAdditions += 1;
-						}
-					}
+					possiblePaths += processNewPossiblePaths(paths, curr, neighbor, possiblePaths);
 
-					pathsSize += pathsAdditions;
 				}
 			}
 		}
 		return null;
+	}
+
+	public List<ArrayList<GeographicPoint>> loadPaths(List<ArrayList<GeographicPoint>> paths,
+													 Queue<GeographicPoint> q, LinkedList<GeographicPoint> visited,
+													  GeographicPoint start) {
+		ArrayList<GeographicPoint> firstList = new ArrayList<>();
+		firstList.add(start);
+		paths.add(firstList);
+		q.add(start);
+		visited.add(start);
+
+		return paths;
+	}
+
+	public List<ArrayList<GeographicPoint>> determinePossiblePaths(List<ArrayList<GeographicPoint>> paths,
+																   GeographicPoint curr) {
+		List<ArrayList<GeographicPoint>> possiblePaths = new LinkedList<>();
+
+		for (ArrayList<GeographicPoint> currList : paths) {
+			GeographicPoint lastPoint = currList.get(currList.size() - 1);
+
+			if(edges.get(lastPoint) == null) {
+				continue;
+			}
+
+			for (MapEdge currEdge : edges.get(lastPoint)) {
+				if (currEdge.getTo().equals(curr)) {
+					possiblePaths.add(currList);
+					break;
+				}
+			}
+		}
+
+		return possiblePaths;
+	}
+
+	public ArrayList<GeographicPoint> determineShortestList(List<ArrayList<GeographicPoint>> paths,
+															GeographicPoint curr,
+															GeographicPoint goal) {
+		List<ArrayList<GeographicPoint>> possiblePaths = determinePossiblePaths(paths, curr);
+		ArrayList<GeographicPoint> shortestList = possiblePaths.get(0);
+
+		for (ArrayList<GeographicPoint> finalist : possiblePaths) {
+			if (finalist.size() < shortestList.size()) {
+				shortestList = finalist;
+			}
+		}
+
+		shortestList.add(goal);
+		return shortestList;
+	}
+
+	public int processNewPossiblePaths(List<ArrayList<GeographicPoint>> paths, GeographicPoint curr, MapEdge neighbor,
+									 int possiblePaths) {
+		int possibleNewPaths = 0;
+
+		for (int i=0; i<possiblePaths; i++) {
+			if (paths.get(i).get(paths.get(i).size() - 1).equals(curr)) {
+				ArrayList<GeographicPoint> newList = new ArrayList<>();
+				newList.addAll(paths.get(i));
+				newList.add(neighbor.getTo());
+				paths.add(newList);
+				possibleNewPaths += 1;
+			}
+		}
+
+		return possibleNewPaths;
+
 	}
 	
 
