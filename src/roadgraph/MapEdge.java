@@ -18,7 +18,7 @@ public class MapEdge {
         this.to = to;
         this.roadName = roadName;
         this.roadType = roadType;
-        this.length = length;
+        this.length = from.distance(to);
     }
 
     public GeographicPoint getFrom() {

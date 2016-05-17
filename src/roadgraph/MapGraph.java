@@ -175,7 +175,7 @@ public class MapGraph {
 		Queue<GeographicPoint> q = new LinkedList<>();
 		LinkedList<GeographicPoint> visited = new LinkedList<>();
 		List<ArrayList<GeographicPoint>> paths = new LinkedList<>();
-		loadPaths(paths, q, visited, start);
+		loadPathsBFS(paths, q, visited, start);
 		int possiblePaths = 1;
 
 		while(!q.isEmpty()) {
@@ -189,7 +189,7 @@ public class MapGraph {
 
 			if (curr.equals(goal)) {
 
-				return determineShortestList(paths, curr, goal);
+				return determineShortestListBFS(paths, curr, goal);
 
 			} else {
 
@@ -199,7 +199,7 @@ public class MapGraph {
 						q.add(neighbor.getTo());
 					}
 
-					possiblePaths += processNewPossiblePaths(paths, curr, neighbor, possiblePaths);
+					possiblePaths += processNewPossiblePathsBFS(paths, curr, neighbor, possiblePaths);
 
 				}
 			}
@@ -207,20 +207,242 @@ public class MapGraph {
 		return null;
 	}
 
-	public List<ArrayList<GeographicPoint>> loadPaths(List<ArrayList<GeographicPoint>> paths,
-													 Queue<GeographicPoint> q, LinkedList<GeographicPoint> visited,
-													  GeographicPoint start) {
+	public void loadPathsBFS(List<ArrayList<GeographicPoint>> paths, Queue<GeographicPoint> q,
+						  LinkedList<GeographicPoint> visited, GeographicPoint start) {
 		ArrayList<GeographicPoint> firstList = new ArrayList<>();
 		firstList.add(start);
 		paths.add(firstList);
 		q.add(start);
 		visited.add(start);
-
-		return paths;
 	}
 
-	public List<ArrayList<GeographicPoint>> determinePossiblePaths(List<ArrayList<GeographicPoint>> paths,
-																   GeographicPoint curr) {
+	public int processNewPossiblePathsBFS(List<ArrayList<GeographicPoint>> paths, GeographicPoint curr, MapEdge neighbor,
+										  int possiblePaths) {
+		int possibleNewPaths = 0;
+
+		for (int i=0; i<possiblePaths; i++) {
+			if (paths.get(i).get(paths.get(i).size() - 1).equals(curr)) {
+				ArrayList<GeographicPoint> newList = new ArrayList<>();
+				newList.addAll(paths.get(i));
+				newList.add(neighbor.getTo());
+				paths.add(newList);
+				possibleNewPaths += 1;
+			}
+		}
+
+		return possibleNewPaths;
+
+	}
+
+	public ArrayList<GeographicPoint> determineShortestListBFS(List<ArrayList<GeographicPoint>> paths,
+															GeographicPoint curr,
+															GeographicPoint goal) {
+		List<ArrayList<GeographicPoint>> possiblePaths = determinePossiblePathsAllSearches(paths, curr);
+		ArrayList<GeographicPoint> shortestList = possiblePaths.get(0);
+
+		for (ArrayList<GeographicPoint> finalist : possiblePaths) {
+			if (finalist.size() < shortestList.size()) {
+				shortestList = finalist;
+			}
+		}
+
+		shortestList.add(goal);
+		return shortestList;
+	}
+
+	/** Find the path from start to goal using Dijkstra's algorithm
+	 *
+	 * @param start The starting location
+	 * @param goal The goal location
+	 * @return The list of intersections that form the shortest path from
+	 *   start to goal (including both start and goal).
+	 */
+	public List<GeographicPoint> dijkstra(GeographicPoint start, GeographicPoint goal) {
+		// Dummy variable for calling the search algorithms
+		// You do not need to change this method.
+		Consumer<GeographicPoint> temp = (x) -> {};
+		return dijkstra(start, goal, temp);
+	}
+
+	/** Find the path from start to goal using Dijkstra's algorithm
+	 *
+	 * @param start The starting location
+	 * @param goal The goal location
+	 * @param nodeSearched A hook for visualization.  See assignment instructions for how to use it.
+	 * @return The list of intersections that form the shortest path from
+	 *   start to goal (including both start and goal).
+	 */
+	public List<GeographicPoint> dijkstra(GeographicPoint start,
+										  GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
+	{
+		// TODO: Implement this method in WEEK 3
+
+		// Hook for visualization.  See writeup.
+		//nodeSearched.accept(next.getLocation());
+
+		LinkedList<GeographicPoint> q = new LinkedList<>();
+		LinkedList<GeographicPoint> visited = new LinkedList<>();
+		HashMap<ArrayList<GeographicPoint>, Double> paths = new HashMap<>();
+		List<ArrayList<GeographicPoint>> pathKeys = new LinkedList<>();
+		loadPathsDijkstraAStar(paths, pathKeys, q, visited, start);
+		int possiblePaths = 1;
+
+		while(!q.isEmpty()) {
+			if (!edges.containsKey(q.peek())) {
+				q.remove();
+				continue;
+			}
+
+			GeographicPoint curr = q.removeFirst();
+			nodeSearched.accept(curr);
+
+			if (curr.getX() == goal.getX() && curr.getY() == goal.getY()) {
+
+				return determineShortestListDijkstraAStar(paths, pathKeys, curr, goal);
+
+			} else {
+
+				for (MapEdge neighbor : edges.get(curr)) {
+					if (!visited.contains(neighbor.getTo())) {
+						visited.add(neighbor.getTo());
+						q.add(neighbor.getTo());
+						Collections.sort(q, (a, b) -> a.distance(start) < b.distance(start) ? -1 :
+								a.distance(start) == b.distance(start) ? 0 : 1);
+					}
+
+					possiblePaths += processNewPossiblePathsDijkstraAStar(paths, pathKeys, curr, neighbor, possiblePaths);
+
+				}
+			}
+		}
+		return null;
+	}
+
+	/** Find the path from start to goal using A-Star search
+	 *
+	 * @param start The starting location
+	 * @param goal The goal location
+	 * @return The list of intersections that form the shortest path from
+	 *   start to goal (including both start and goal).
+	 */
+	public List<GeographicPoint> aStarSearch(GeographicPoint start, GeographicPoint goal) {
+		// Dummy variable for calling the search algorithms
+		Consumer<GeographicPoint> temp = (x) -> {};
+		return aStarSearch(start, goal, temp);
+	}
+
+	/** Find the path from start to goal using A-Star search
+	 *
+	 * @param start The starting location
+	 * @param goal The goal location
+	 * @param nodeSearched A hook for visualization.  See assignment instructions for how to use it.
+	 * @return The list of intersections that form the shortest path from
+	 *   start to goal (including both start and goal).
+	 */
+	public List<GeographicPoint> aStarSearch(GeographicPoint start,
+											 GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
+	{
+		// TODO: Implement this method in WEEK 3
+
+		// Hook for visualization.  See writeup.
+		//nodeSearched.accept(next.getLocation());
+		LinkedList<GeographicPoint> q = new LinkedList<>();
+		LinkedList<GeographicPoint> visited = new LinkedList<>();
+		HashMap<ArrayList<GeographicPoint>, Double> paths = new HashMap<>();
+		List<ArrayList<GeographicPoint>> pathKeys = new LinkedList<>();
+		loadPathsDijkstraAStar(paths, pathKeys, q, visited, start);
+		int possiblePaths = 1;
+
+		while(!q.isEmpty()) {
+			if (!edges.containsKey(q.peek())) {
+				q.remove();
+			}
+
+			GeographicPoint curr = q.removeFirst();
+			nodeSearched.accept(curr);
+
+			if (curr.getX() == goal.getX() && curr.getY() == goal.getY()) {
+				return determineShortestListDijkstraAStar(paths, pathKeys, curr, goal);
+
+			} else {
+
+				for (MapEdge neighbor : edges.get(curr)) {
+					if (!visited.contains(neighbor.getTo())) {
+						visited.add(neighbor.getTo());
+						q.add(neighbor.getTo());
+						Collections.sort(q, (a, b) -> (a.distance(start) + a.distance(goal)) <
+								(b.distance(start) + b.distance(goal)) ? -1 :
+								(a.distance(start) + a.distance(goal)) == (b.distance(start) + b.distance(goal)) ? 0 : 1);
+					}
+
+					possiblePaths += processNewPossiblePathsDijkstraAStar(paths, pathKeys, curr, neighbor, possiblePaths);
+
+				}
+			}
+		}
+		return null;
+	}
+
+	public void loadPathsDijkstraAStar(HashMap<ArrayList<GeographicPoint>, Double> paths,
+									   List<ArrayList<GeographicPoint>> pathKeys, Queue<GeographicPoint> q,
+									   LinkedList<GeographicPoint> visited, GeographicPoint start) {
+		ArrayList<GeographicPoint> firstList = new ArrayList<>();
+		firstList.add(start);
+		pathKeys.add(firstList);
+		paths.put(firstList, 0.0);
+		q.add(start);
+		visited.add(start);
+	}
+
+
+	public int processNewPossiblePathsDijkstraAStar(HashMap<ArrayList<GeographicPoint>, Double> paths,
+													List<ArrayList<GeographicPoint>> pathKeys,
+													GeographicPoint curr, MapEdge neighbor, int possiblePaths) {
+		int possibleNewPaths = 0;
+
+		for (int i=0; i<possiblePaths; i++) {
+			if (pathKeys.get(i).get(pathKeys.get(i).size() - 1).equals(curr)) {
+				ArrayList<GeographicPoint> newList = new ArrayList<>();
+				newList.addAll(pathKeys.get(i));
+				newList.add(neighbor.getTo());
+				pathKeys.add(newList);
+				paths.put(newList, paths.get(pathKeys.get(i)) + neighbor.getLength());
+				possibleNewPaths += 1;
+			}
+		}
+
+		return possibleNewPaths;
+	}
+
+	public ArrayList<GeographicPoint> determineShortestListDijkstraAStar(HashMap<ArrayList<GeographicPoint>, Double> paths,
+																		 List<ArrayList<GeographicPoint>> pathKeys,
+																		 GeographicPoint curr,
+																		 GeographicPoint goal) {
+		List<ArrayList<GeographicPoint>> possiblePaths = determinePossiblePathsAllSearches(pathKeys, curr);
+		ArrayList<GeographicPoint> shortestList = possiblePaths.get(0);
+
+		for(ArrayList<GeographicPoint> currList : possiblePaths) {
+			Double newDistance = paths.get(currList) + currList.get(currList.size() - 1).distance(goal);
+			currList.add(goal);
+
+			for(int i=1; i<currList.size(); i++) {
+				newDistance += currList.get(i).distance(currList.get(i-1));
+			}
+
+			paths.put(currList, newDistance);
+		}
+
+		for (ArrayList<GeographicPoint> finalist : possiblePaths) {
+			if (paths.get(finalist) < paths.get(shortestList)) {
+				shortestList = finalist;
+			}
+		}
+
+		return shortestList;
+	}
+
+	public List<ArrayList<GeographicPoint>> determinePossiblePathsAllSearches(List<ArrayList<GeographicPoint>> paths,
+																			  GeographicPoint curr) {
 		List<ArrayList<GeographicPoint>> possiblePaths = new LinkedList<>();
 
 		for (ArrayList<GeographicPoint> currList : paths) {
@@ -241,135 +463,34 @@ public class MapGraph {
 		return possiblePaths;
 	}
 
-	public ArrayList<GeographicPoint> determineShortestList(List<ArrayList<GeographicPoint>> paths,
-															GeographicPoint curr,
-															GeographicPoint goal) {
-		List<ArrayList<GeographicPoint>> possiblePaths = determinePossiblePaths(paths, curr);
-		ArrayList<GeographicPoint> shortestList = possiblePaths.get(0);
-
-		for (ArrayList<GeographicPoint> finalist : possiblePaths) {
-			if (finalist.size() < shortestList.size()) {
-				shortestList = finalist;
-			}
-		}
-
-		shortestList.add(goal);
-		return shortestList;
-	}
-
-	public int processNewPossiblePaths(List<ArrayList<GeographicPoint>> paths, GeographicPoint curr, MapEdge neighbor,
-									 int possiblePaths) {
-		int possibleNewPaths = 0;
-
-		for (int i=0; i<possiblePaths; i++) {
-			if (paths.get(i).get(paths.get(i).size() - 1).equals(curr)) {
-				ArrayList<GeographicPoint> newList = new ArrayList<>();
-				newList.addAll(paths.get(i));
-				newList.add(neighbor.getTo());
-				paths.add(newList);
-				possibleNewPaths += 1;
-			}
-		}
-
-		return possibleNewPaths;
-
-	}
-	
-
-	/** Find the path from start to goal using Dijkstra's algorithm
-	 * 
-	 * @param start The starting location
-	 * @param goal The goal location
-	 * @return The list of intersections that form the shortest path from 
-	 *   start to goal (including both start and goal).
-	 */
-	public List<GeographicPoint> dijkstra(GeographicPoint start, GeographicPoint goal) {
-		// Dummy variable for calling the search algorithms
-		// You do not need to change this method.
-        Consumer<GeographicPoint> temp = (x) -> {};
-        return dijkstra(start, goal, temp);
-	}
-	
-	/** Find the path from start to goal using Dijkstra's algorithm
-	 * 
-	 * @param start The starting location
-	 * @param goal The goal location
-	 * @param nodeSearched A hook for visualization.  See assignment instructions for how to use it.
-	 * @return The list of intersections that form the shortest path from 
-	 *   start to goal (including both start and goal).
-	 */
-	public List<GeographicPoint> dijkstra(GeographicPoint start, 
-										  GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
-	{
-		// TODO: Implement this method in WEEK 3
-
-		// Hook for visualization.  See writeup.
-		//nodeSearched.accept(next.getLocation());
-		
-		return null;
-	}
-
-	/** Find the path from start to goal using A-Star search
-	 * 
-	 * @param start The starting location
-	 * @param goal The goal location
-	 * @return The list of intersections that form the shortest path from 
-	 *   start to goal (including both start and goal).
-	 */
-	public List<GeographicPoint> aStarSearch(GeographicPoint start, GeographicPoint goal) {
-		// Dummy variable for calling the search algorithms
-        Consumer<GeographicPoint> temp = (x) -> {};
-        return aStarSearch(start, goal, temp);
-	}
-	
-	/** Find the path from start to goal using A-Star search
-	 * 
-	 * @param start The starting location
-	 * @param goal The goal location
-	 * @param nodeSearched A hook for visualization.  See assignment instructions for how to use it.
-	 * @return The list of intersections that form the shortest path from 
-	 *   start to goal (including both start and goal).
-	 */
-	public List<GeographicPoint> aStarSearch(GeographicPoint start, 
-											 GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
-	{
-		// TODO: Implement this method in WEEK 3
-		
-		// Hook for visualization.  See writeup.
-		//nodeSearched.accept(next.getLocation());
-		
-		return null;
-	}
-
-	
-	
 	public static void main(String[] args)
 	{
 		System.out.print("Making a new map...");
 		MapGraph theMap = new MapGraph();
 		System.out.print("DONE. \nLoading the map...");
-		GraphLoader.loadRoadMap("data/testdata/simpletest.map", theMap);
+		GraphLoader.loadRoadMap("data/maps/san_diego.map", theMap);
 		System.out.println("DONE.");
 		
-		// You can use this method for testing.
+		/*// You can use this method for testing.
 		GeographicPoint start = new GeographicPoint(4.0, 2.0);
 		GeographicPoint end = new GeographicPoint(8.0, -1.0);
 		theMap.bfs(start, end);
 
-		/* Use this code in Week 3 End of Week Quiz
+		// Use this code in Week 3 End of Week Quiz
 		MapGraph theMap = new MapGraph();
 		System.out.print("DONE. \nLoading the map...");
 		GraphLoader.loadRoadMap("data/maps/utc.map", theMap);
-		System.out.println("DONE.");
+		System.out.println("DONE.");*/
 
-		GeographicPoint start = new GeographicPoint(32.8648772, -117.2254046);
-		GeographicPoint end = new GeographicPoint(32.8660691, -117.217393);
+		GeographicPoint start = new GeographicPoint(32.8709815, -117.1691711);
+		GeographicPoint end = new GeographicPoint(32.7138411, -117.1460406);
 		
 		
 		List<GeographicPoint> route = theMap.dijkstra(start,end);
+		System.out.println(route);
 		List<GeographicPoint> route2 = theMap.aStarSearch(start,end);
 
-		*/
+
 		
 	}
 	
