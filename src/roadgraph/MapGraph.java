@@ -28,6 +28,7 @@ public class MapGraph {
 	private int numEdges;
 	private Set<GeographicPoint> vertices;
 	private HashMap<GeographicPoint, ArrayList<MapEdge>> edges;
+	private ArrayList<GeographicPoint> recordVisitedNodes = new ArrayList<>();
 
 	/** 
 	 * Create a new empty MapGraph
@@ -186,6 +187,7 @@ public class MapGraph {
 
 			GeographicPoint curr = q.remove();
 			nodeSearched.accept(curr);
+			recordVisitedNodes.add(curr);
 
 			if (curr.equals(goal)) {
 
@@ -295,6 +297,7 @@ public class MapGraph {
 
 			GeographicPoint curr = q.removeFirst();
 			nodeSearched.accept(curr);
+			recordVisitedNodes.add(curr);
 
 			if (curr.getX() == goal.getX() && curr.getY() == goal.getY()) {
 
@@ -360,6 +363,7 @@ public class MapGraph {
 
 			GeographicPoint curr = q.removeFirst();
 			nodeSearched.accept(curr);
+			recordVisitedNodes.add(curr);
 
 			if (curr.getX() == goal.getX() && curr.getY() == goal.getY()) {
 				return determineShortestListDijkstraAStar(paths, pathKeys, curr, goal);
@@ -463,6 +467,37 @@ public class MapGraph {
 		return possiblePaths;
 	}
 
+	public void tightSearchScoreGenerator(GeographicPoint start, GeographicPoint goal) {
+
+		double BFSTightSearchScore = processTightSearchScore(start, goal, (ArrayList<GeographicPoint>) bfs(start, goal));
+		double dijkstraTightSearchScore = processTightSearchScore(start, goal, (ArrayList<GeographicPoint>) dijkstra(start, goal));
+		double aStarTightSearchScore = processTightSearchScore(start, goal, (ArrayList<GeographicPoint>) aStarSearch(start, goal));
+
+		System.out.println("Average Tight Search Scores: \nBFS: " + BFSTightSearchScore + "\nDijkstra: " +
+		dijkstraTightSearchScore + "\nAStar: " + aStarTightSearchScore);
+
+	}
+
+	public double processTightSearchScore(GeographicPoint start, GeographicPoint goal, ArrayList<GeographicPoint> route) {
+		GeographicPoint closestPoint = start;
+		double totalPointDistances = 0.0;
+		for( GeographicPoint currPoint : recordVisitedNodes ) {
+			for( GeographicPoint routePoint : route ) {
+				if( currPoint.distance(routePoint) < currPoint.distance(closestPoint) ) {
+					closestPoint = routePoint;
+				}
+			}
+
+			totalPointDistances += currPoint.distance(closestPoint);
+		}
+
+		double tightSearchScore = (totalPointDistances / recordVisitedNodes.size());
+
+		recordVisitedNodes.clear();
+
+		return tightSearchScore;
+	}
+
 	public static void main(String[] args)
 	{
 		System.out.print("Making a new map...");
@@ -482,13 +517,16 @@ public class MapGraph {
 		GraphLoader.loadRoadMap("data/maps/utc.map", theMap);
 		System.out.println("DONE.");*/
 
-		GeographicPoint start = new GeographicPoint(32.8709815, -117.1691711);
-		GeographicPoint end = new GeographicPoint(32.7138411, -117.1460406);
+		GeographicPoint start = new GeographicPoint(32.7229776, -117.1665031);
+		GeographicPoint end = new GeographicPoint(32.717812, -117.1601757);
 		
 		
 		List<GeographicPoint> route = theMap.dijkstra(start,end);
 		System.out.println(route);
 		List<GeographicPoint> route2 = theMap.aStarSearch(start,end);
+		System.out.println(route2);
+
+		theMap.tightSearchScoreGenerator(start, end);
 
 
 		
