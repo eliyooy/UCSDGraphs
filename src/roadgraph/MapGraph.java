@@ -469,16 +469,16 @@ public class MapGraph {
 
 	public void tightSearchScoreGenerator(GeographicPoint start, GeographicPoint goal) {
 
-		double BFSTightSearchScore = processTightSearchScore(start, goal, (ArrayList<GeographicPoint>) bfs(start, goal));
-		double dijkstraTightSearchScore = processTightSearchScore(start, goal, (ArrayList<GeographicPoint>) dijkstra(start, goal));
-		double aStarTightSearchScore = processTightSearchScore(start, goal, (ArrayList<GeographicPoint>) aStarSearch(start, goal));
+		double BFSTightSearchScore = processTightSearchScore(start, (ArrayList<GeographicPoint>) bfs(start, goal));
+		double dijkstraTightSearchScore = processTightSearchScore(start, (ArrayList<GeographicPoint>) dijkstra(start, goal));
+		double aStarTightSearchScore = processTightSearchScore(start, (ArrayList<GeographicPoint>) aStarSearch(start, goal));
 
 		System.out.println("Average Tight Search Scores: \nBFS: " + BFSTightSearchScore + "\nDijkstra: " +
 		dijkstraTightSearchScore + "\nAStar: " + aStarTightSearchScore);
 
 	}
 
-	public double processTightSearchScore(GeographicPoint start, GeographicPoint goal, ArrayList<GeographicPoint> route) {
+	public double processTightSearchScore(GeographicPoint start, ArrayList<GeographicPoint> route) {
 		GeographicPoint closestPoint = start;
 		double totalPointDistances = 0.0;
 		for( GeographicPoint currPoint : recordVisitedNodes ) {
